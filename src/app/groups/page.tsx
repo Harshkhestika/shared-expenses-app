@@ -1,17 +1,20 @@
 import { prisma } from '@/lib/prisma';
 import { getGroupBalances } from '@/lib/balances';
 import Link from 'next/link';
+import AddExpenseModal from './AddExpenseModal';
+import SettleDebtModal from './SettleDebtModal';
 
 export const dynamic = 'force-dynamic';
 
 export default async function GroupsPage() {
   const group = await prisma.group.findFirst();
+  const allUsers = await prisma.user.findMany(); // For dropdowns
 
   if (!group) {
     return (
       <div className="glass-panel text-center">
         <h2>No Groups Found</h2>
-        <p className="text-muted">You haven't imported any data yet.</p>
+        <p className="text-muted">You haven't created any groups or imported data yet.</p>
         <Link href="/import" className="btn btn-primary" style={{ marginTop: '1rem' }}>Go to Import</Link>
       </div>
     );
@@ -32,8 +35,16 @@ export default async function GroupsPage() {
 
   return (
     <div>
-      <h1 style={{ marginBottom: '0.5rem' }}>{group.name}</h1>
-      <p className="text-muted" style={{ marginBottom: '2rem' }}>Shared Expenses Dashboard</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <div>
+          <h1 style={{ marginBottom: '0.2rem' }}>{group.name}</h1>
+          <p className="text-muted">Shared Expenses Dashboard</p>
+        </div>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <SettleDebtModal groupId={group.id} users={allUsers} />
+          <AddExpenseModal groupId={group.id} users={allUsers} />
+        </div>
+      </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '3rem' }}>
         <div className="glass-panel">

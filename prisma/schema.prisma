@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String            @id @default(uuid())
+  name                String
+  email               String            @unique
+  passwordHash        String
+  memberships         GroupMembership[]
+  paidExpenses        Expense[]         @relation("PaidExpenses")
+  expenseSplits       ExpenseSplit[]
+  paidSettlements     Settlement[]      @relation("PaidSettlements")
+  receivedSettlements Settlement[]      @relation("ReceivedSettlements")
+  createdAt           DateTime          @default(now())
+}
+
+model Group {
+  id          String            @id @default(uuid())
+  name        String
+  memberships GroupMembership[]
+  expenses    Expense[]
+  settlements Settlement[]
+  createdAt   DateTime          @default(now())
+}
+
+model GroupMembership {
+  id       String    @id @default(uuid())
+  groupId  String
+  userId   String
+  joinedAt DateTime  @default(now())
+  leftAt   DateTime?
+  group    Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+}
+
+model Expense {
+  id               String         @id @default(uuid())
+  groupId          String
+  paidById         String
+  amount           Float
+  originalCurrency String         @default("INR")
+  exchangeRate     Float          @default(1.0)
+  convertedAmount  Float
+  description      String
+  date             DateTime
+  createdAt        DateTime       @default(now())
+  group            Group          @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  paidBy           User           @relation("PaidExpenses", fields: [paidById], references: [id], onDelete: Cascade)
+  splits           ExpenseSplit[]
+}
+
+model ExpenseSplit {
+  id        String  @id @default(uuid())
+  expenseId String
+  userId    String
+  amount    Float
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Settlement {
+  id       String   @id @default(uuid())
+  groupId  String
+  paidById String
+  paidToId String
+  amount   Float
+  date     DateTime @default(now())
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  paidBy   User     @relation("PaidSettlements", fields: [paidById], references: [id], onDelete: Cascade)
+  paidTo   User     @relation("ReceivedSettlements", fields: [paidToId], references: [id], onDelete: Cascade)
+}
+
+model AnomalyLog {
+  id             String   @id @default(uuid())
+  rowData        String
+  description    String
+  resolvedAction String
+  createdAt      DateTime @default(now())
+}

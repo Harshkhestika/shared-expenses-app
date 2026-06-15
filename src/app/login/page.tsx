@@ -7,12 +7,26 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const [error, setError] = useState('');
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Dummy login module for the requirement
+    setError('');
     if (email && password) {
-      document.cookie = `auth=true; path=/`;
-      router.push('/');
+      // Dummy check since this is a simplified assignment, we check name instead of email
+      // We will extract the name from the email prefix (e.g. "aisha@example.com" -> "Aisha")
+      const name = email.split('@')[0];
+      
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        body: JSON.stringify({ name })
+      });
+      if (res.ok) {
+        router.push('/groups');
+        router.refresh();
+      } else {
+        setError('User not found in the database. (Try aisha@example.com, rohan@...)');
+      }
     }
   };
 
@@ -43,6 +57,7 @@ export default function LoginPage() {
         <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
           Login
         </button>
+        {error && <div style={{ marginTop: '1rem', color: 'var(--danger)', fontSize: '0.9rem', textAlign: 'center' }}>{error}</div>}
       </form>
     </div>
   );

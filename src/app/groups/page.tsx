@@ -3,11 +3,14 @@ import { getGroupBalances } from '@/lib/balances';
 import Link from 'next/link';
 import AddExpenseModal from './AddExpenseModal';
 import SettleDebtModal from './SettleDebtModal';
+import ManageMembersModal from './ManageMembersModal';
 
 export const dynamic = 'force-dynamic';
 
 export default async function GroupsPage() {
-  const group = await prisma.group.findFirst();
+  const group = await prisma.group.findFirst({
+    include: { memberships: { include: { user: true } } }
+  });
   const allUsers = await prisma.user.findMany(); // For dropdowns
 
   if (!group) {
@@ -41,6 +44,7 @@ export default async function GroupsPage() {
           <p className="text-muted">Shared Expenses Dashboard</p>
         </div>
         <div style={{ display: 'flex', gap: '1rem' }}>
+          <ManageMembersModal groupId={group.id} memberships={group.memberships} allUsers={allUsers} />
           <SettleDebtModal groupId={group.id} users={allUsers} />
           <AddExpenseModal groupId={group.id} users={allUsers} />
         </div>

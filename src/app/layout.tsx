@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { cookies } from 'next/headers';
+import LogoutButton from '@/components/LogoutButton';
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -6,11 +8,14 @@ export const metadata: Metadata = {
   description: "A premium shared expenses management app",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get('userId')?.value;
+
   return (
     <html lang="en">
       <head>
@@ -22,8 +27,9 @@ export default function RootLayout({
           <header className="header-nav animate-fade-in">
             <div className="header-logo">SplitPro</div>
             <nav style={{ display: 'flex', gap: '1rem' }}>
-              <a href="/login" className="btn btn-secondary">Login</a>
-              <a href="/groups" className="btn btn-secondary">Dashboard</a>
+              {!userId && <a href="/login" className="btn btn-secondary">Login</a>}
+              {userId && <a href="/groups" className="btn btn-secondary">Dashboard</a>}
+              {userId && <LogoutButton />}
             </nav>
           </header>
           <main className="animate-fade-in">

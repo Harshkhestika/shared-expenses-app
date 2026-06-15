@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { userId } = await request.json();
+    const params = await context.params;
     const groupId = params.id;
 
     const existing = await prisma.groupMembership.findUnique({
@@ -34,9 +35,10 @@ export async function POST(request: Request, { params }: { params: { id: string 
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { userId } = await request.json();
+    const params = await context.params;
     const groupId = params.id;
 
     const existing = await prisma.groupMembership.findUnique({

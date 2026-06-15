@@ -21,8 +21,9 @@ export default function RootLayout({
         <div className="container">
           <header className="header-nav animate-fade-in">
             <div className="header-logo">SplitPro</div>
-            <nav>
-              <a href="/" className="btn btn-secondary">Dashboard</a>
+            <nav style={{ display: 'flex', gap: '1rem' }}>
+              <a href="/login" className="btn btn-secondary">Login</a>
+              <a href="/groups" className="btn btn-secondary">Dashboard</a>
             </nav>
           </header>
           <main className="animate-fade-in">

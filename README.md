@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SplitPro - Shared Expenses App
 
-## Getting Started
+SplitPro is a premium, full-stack web application designed to solve messy shared expenses tracking. It supports complex split structures, time-bound memberships, debt simplification, and a robust legacy CSV ingestion engine.
 
-First, run the development server:
+## Live Deployment
+- **URL:** [To be added by user after deployment]
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Prerequisites
+- Node.js 20+
+- npm
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup Instructions
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Database Setup**
+   The application uses an embedded SQLite database. Run the following to set up the schema:
+   ```bash
+   npx prisma db push
+   ```
 
-## Learn More
+3. **Run Development Server**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000)
 
-To learn more about Next.js, take a look at the following resources:
+4. **Testing the CSV Importer**
+   - Click "Import Legacy Data" on the homepage.
+   - The app will automatically ingest `expenses_export.csv` from the project root.
+   - Review the generated **Anomaly Log Report** directly in the UI.
+   - Navigate to **View Groups** to see the resolved balances ("Who pays whom") and the raw expense trace.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Architecture & Technology
+- **Framework:** Next.js 16 (App Router)
+- **Database:** SQLite (Relational DB)
+- **ORM:** Prisma
+- **Styling:** Vanilla CSS (CSS Modules & Variables)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Provided Deliverables
+- `SCOPE.md`: Database schema and anomaly detection policy log.
+- `DECISIONS.md`: Log of technical and product decisions.
+- `AI_USAGE.md`: Summary of AI prompts and corrected hallucinations.
+- `Import Report`: Dynamically generated in the UI upon ingestion.

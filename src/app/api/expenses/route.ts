@@ -5,7 +5,8 @@ import { cookies } from 'next/headers';
 export async function POST(request: Request) {
   try {
     const { groupId, description, amount, splitType, splitDetails } = await request.json();
-    const paidById = cookies().get('userId')?.value;
+    const cookieStore = await cookies();
+    const paidById = cookieStore.get('userId')?.value;
 
     if (!paidById) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

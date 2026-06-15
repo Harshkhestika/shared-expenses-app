@@ -26,8 +26,9 @@ export async function POST(request: Request) {
       }
     });
 
-    cookies().set('userId', user.id, { path: '/' });
-    cookies().set('userName', user.name, { path: '/' });
+    const cookieStore = await cookies();
+    cookieStore.set('userId', user.id, { path: '/' });
+    cookieStore.set('userName', user.name, { path: '/' });
 
     return NextResponse.json({ success: true, user: { id: user.id, name: user.name } });
   } catch (error: any) {
